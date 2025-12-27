@@ -9,36 +9,43 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * The type Main app.
+ * MainApp - Collector Service ana uygulama sınıfı
+ * 
+ * Bu servis, Discord ve Zoom platformlarından toplantı verilerini toplar
+ * ve Outbox pattern kullanarak güvenilir şekilde Kafka'ya iletir.
+ * 
+ * Ana Sorumluluklar:
+ * - Discord bot entegrasyonu (mesaj ve ses toplama)
+ * - Zoom webhook ve API entegrasyonu
+ * - Veritabanına kayıt (MySQL)
+ * - Outbox pattern ile event sourcing
+ * 
+ * Mimari: Mikroservis mimarisinde veri toplama katmanı
+ * 
+ * @author Ahmet
+ * @version 1.0
  */
-@SpringBootApplication(scanBasePackages = {
-        "org.example.collector_service",
-        "relayer",
-        "service",
-        "repository",
-        "model",
-        "bot",
-        "controller",
-        "config"
-})
+@SpringBootApplication(scanBasePackages = "org.example.collector_service")
 @EnableScheduling
-@EnableJpaRepositories(basePackages = "repository")
-@EntityScan(basePackages = "model")
+@EnableJpaRepositories(basePackages = "org.example.collector_service.repository")
+@EntityScan(basePackages = "org.example.collector_service.domain.model")
 public class MainApp {
 
     /**
-     * The entry point of application.
+     * Uygulama başlangıç noktası.
+     * Spring Boot container'ını başlatır ve tüm servisleri aktif eder.
      *
-     * @param args the input arguments
+     * @param args Komut satırı argümanları
      */
     public static void main(String[] args) {
         SpringApplication.run(MainApp.class, args);
     }
 
     /**
-     * Object mapper object mapper.
+     * Jackson ObjectMapper bean yapılandırması.
+     * Java 8 Date/Time API desteği ve ISO-8601 tarih formatı ile yapılandırılır.
      *
-     * @return the object mapper
+     * @return Yapılandırılmış ObjectMapper instance
      */
     @Bean
     public ObjectMapper objectMapper() {
